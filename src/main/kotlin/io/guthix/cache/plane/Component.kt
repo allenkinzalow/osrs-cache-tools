@@ -22,7 +22,9 @@ import java.nio.ByteBuffer
 
 @ExperimentalUnsignedTypes
 data class Component(val id: Int) {
+    var isIf3 = false
     var hasScript = false
+    var type = 0
     var menuType = 0
     var contentType: UShort = 0u
     var originalX: Short = 0
@@ -32,7 +34,7 @@ data class Component(val id: Int) {
     var opacity: UByte = 0u
     var parentId: Int? = null
     var hoveredSiblingId: UShort? = null
-    var cs1InstructionCount: Array<Array<UShort?>>? = null
+    var clientScripts: Array<Array<UShort?>>? = null
     var scrollHeight: UShort = 0u
     var scrollWidth: UShort = 0u
     var isHidden: Boolean = false
@@ -50,7 +52,7 @@ data class Component(val id: Int) {
     var yTextAlignment: UByte = 0u
     var lineHeight: UByte = 0u
     var fontId: UShort? = null
-    var textIsShadowed = false
+    var textShadowed = false
     var text = ""
     var alternateText = ""
     var textColor = 0
@@ -71,15 +73,15 @@ data class Component(val id: Int) {
     var targetVerb = ""
     var spellName = ""
     var tooltip = "Ok"
-    var dynamicWidth: Byte = 0
-    var buttonType: Byte = 0
-    var dynamicX: Byte = 0
-    var dynamicY: Byte = 0
+    var widthMode: Byte = 0
+    var heightMode: Byte = 0
+    var xPositionMode: Byte = 0
+    var yPositionMode: Byte = 0
     var noClickThrough = false
     var textureId: UShort = 0u
     var spriteTiling = false
-    var borderThickness: UByte = 0u
-    var sprite2 = 0
+    var borderType: UByte = 0u
+    var shadowColor = 0
     var flippedVertically: Boolean? = null
     var flippedHorizontally: Boolean? = null
     var offsetX2d: Short = 0
@@ -88,7 +90,7 @@ data class Component(val id: Int) {
     var modelHeightOverride: UShort = 0u
     var lineWidth: UByte = 0u
     var lineDirection = false
-    var opBase: String = ""
+    var name: String = ""
     var actions: Array<String?>? = null
     var dragDeadZone: UByte = 0u
     var dragDeadTime: UByte = 0u
@@ -128,8 +130,10 @@ data class Component(val id: Int) {
         @ExperimentalUnsignedTypes
         private fun decodeIf1(id: Int, buffer: ByteBuffer): Component {
             val iFace = Component(id)
+            iFace.isIf3 = false
             iFace.hasScript = false
             val type = buffer.uByte.toInt()
+            iFace.type = type
             iFace.menuType = buffer.uByte.toInt()
             iFace.contentType = buffer.uShort
             iFace.originalX = buffer.short
@@ -155,7 +159,7 @@ data class Component(val id: Int) {
                 }
             }
             val cs1InstructionCount = buffer.uByte.toInt()
-            iFace.cs1InstructionCount = if (cs1InstructionCount > 0) {
+            iFace.clientScripts = if (cs1InstructionCount > 0) {
                 Array(cs1InstructionCount) {
                     val byteCodeSize = buffer.uShort.toInt()
                     val instructions = Array(byteCodeSize) {
@@ -211,7 +215,7 @@ data class Component(val id: Int) {
                 iFace.lineHeight  = buffer.uByte
                 iFace.fontId = buffer.uShort
                 if (iFace.fontId == UShort.MAX_VALUE) iFace.fontId = null
-                iFace.textIsShadowed = buffer.uByte.toInt() == 1
+                iFace.textShadowed = buffer.uByte.toInt() == 1
             }
             if (type == 4) {
                 iFace.text = buffer.string
@@ -249,7 +253,7 @@ data class Component(val id: Int) {
                 iFace.xTextAlignment = buffer.uByte
                 iFace.fontId = buffer.uShort
                 if (iFace.fontId == UShort.MAX_VALUE) iFace.fontId = null
-                iFace.textIsShadowed = buffer.uByte.toInt() == 1
+                iFace.textShadowed = buffer.uByte.toInt() == 1
                 iFace.textColor = buffer.int
                 iFace.xPitch = buffer.short
                 iFace.yPitch = buffer.short
@@ -288,9 +292,11 @@ data class Component(val id: Int) {
 
         private fun decodeIf3(id: Int, buffer: ByteBuffer): Component {
             val iFace = Component(id)
+            iFace.isIf3 = true
             buffer.uByte
             iFace.hasScript = true
             val type = buffer.uByte.toInt()
+            iFace.type = type
             iFace.contentType = buffer.uShort
             iFace.originalX = buffer.short
             iFace.originalY = buffer.short
@@ -300,10 +306,10 @@ data class Component(val id: Int) {
             } else {
                 iFace.originalHeight = buffer.uShort.toInt()
             }
-            iFace.dynamicWidth = buffer.get()
-            iFace.buttonType = buffer.get()
-            iFace.dynamicX = buffer.get()
-            iFace.dynamicY = buffer.get()
+            iFace.widthMode = buffer.get()
+            iFace.heightMode = buffer.get()
+            iFace.xPositionMode = buffer.get()
+            iFace.yPositionMode = buffer.get()
             iFace.parentId = buffer.uShort.toInt()
             iFace.parentId = if(iFace.parentId == UShort.MAX_VALUE.toInt()) {
                 null
@@ -321,8 +327,8 @@ data class Component(val id: Int) {
                 iFace.textureId = buffer.uShort
                 iFace.spriteTiling = buffer.uByte.toInt() == 1
                 iFace.opacity = buffer.uByte
-                iFace.borderThickness = buffer.uByte
-                iFace.sprite2 = buffer.int
+                iFace.borderType = buffer.uByte
+                iFace.shadowColor = buffer.int
                 iFace.flippedVertically = buffer.uByte.toInt() == 1
                 iFace.flippedHorizontally = buffer.uByte.toInt() == 1
             }
@@ -340,8 +346,8 @@ data class Component(val id: Int) {
                 if (iFace.animationId == UShort.MAX_VALUE) iFace.animationId = null
                 iFace.orthogonal = buffer.uByte.toInt() == 1
                 buffer.uShort
-                if (iFace.dynamicWidth.toInt() != 0) iFace.modelHeightOverride = buffer.uShort
-                if (iFace.buttonType.toInt() != 0) buffer.uShort
+                if (iFace.widthMode.toInt() != 0) iFace.modelHeightOverride = buffer.uShort
+                if (iFace.heightMode.toInt() != 0) buffer.uShort
             }
             if (type == 4) {
                 iFace.fontId = buffer.uShort
@@ -350,7 +356,7 @@ data class Component(val id: Int) {
                 iFace.lineHeight = buffer.uByte
                 iFace.xTextAlignment = buffer.uByte
                 iFace.yTextAlignment = buffer.uByte
-                iFace.textIsShadowed = buffer.uByte.toInt() == 1
+                iFace.textShadowed = buffer.uByte.toInt() == 1
                 iFace.textColor = buffer.int
             }
             if (type == 3) {
@@ -365,7 +371,7 @@ data class Component(val id: Int) {
             }
 
             iFace.clickMask = buffer.uMedium
-            iFace.opBase = buffer.string
+            iFace.name = buffer.string
             val actionCount = buffer.uByte.toInt()
             if (actionCount > 0) {
                 iFace.actions = arrayOfNulls(actionCount)

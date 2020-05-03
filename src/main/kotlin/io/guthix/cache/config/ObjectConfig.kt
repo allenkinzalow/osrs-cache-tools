@@ -29,7 +29,7 @@ data class ObjectConfig(override val id: Int): Config(id) {
     var sizeX: UByte= 1u
     var sizeY: UByte = 1u
     var transformVarbit: UShort? = null
-    var mapIconId: UShort? = null
+    var worldMapElementId: UShort? = null
     var transformVarp: UShort? = null
     val options = arrayOfNulls<String>(5)
     var clipType = 2
@@ -63,9 +63,9 @@ data class ObjectConfig(override val id: Int): Config(id) {
     var supportItems: UByte? = null
     var transforms: Array<UShort?>? = null
     var ambientSoundId: UShort? = null
-    var anInt2112: UShort = 0u
-    var anInt2113: UShort = 0u
-    var anInt2083: UByte = 0u
+    var ambientSoundDuration: UShort = 0u
+    var ambientSoundDurationExtend: UShort = 0u
+    var ambientSoundRadius: UByte = 0u
     var soundEffectIDs: UShortArray? = null
     var params: HashMap<Int, Any>? = null
 
@@ -213,19 +213,19 @@ data class ObjectConfig(override val id: Int): Config(id) {
             if(ambientSoundId != null) {
                 os.writeOpcode(78)
                 os.writeShort(ambientSoundId!!.toInt())
-                os.writeByte(anInt2083.toInt())
+                os.writeByte(ambientSoundRadius.toInt())
             }
             if(soundEffectIDs != null) {
                 os.writeOpcode(79)
-                os.writeShort(anInt2112.toInt())
-                os.writeShort(anInt2113.toInt())
-                os.writeByte(anInt2083.toInt())
+                os.writeShort(ambientSoundDuration.toInt())
+                os.writeShort(ambientSoundDurationExtend.toInt())
+                os.writeByte(ambientSoundRadius.toInt())
                 os.writeByte(soundEffectIDs!!.size)
                 soundEffectIDs!!.forEach { os.writeShort(it.toInt()) }
             }
-            mapIconId?.let {
+            worldMapElementId?.let {
                 os.writeOpcode(82)
-                os.writeShort(mapIconId!!.toInt())
+                os.writeShort(worldMapElementId!!.toInt())
             }
             params?.let {
                 os.writeOpcode(249)
@@ -245,7 +245,7 @@ data class ObjectConfig(override val id: Int): Config(id) {
         if (sizeX != other.sizeX) return false
         if (sizeY != other.sizeY) return false
         if (transformVarbit != other.transformVarbit) return false
-        if (mapIconId != other.mapIconId) return false
+        if (worldMapElementId != other.worldMapElementId) return false
         if (transformVarp != other.transformVarp) return false
         if (!options.contentEquals(other.options)) return false
         if (clipType != other.clipType) return false
@@ -282,9 +282,9 @@ data class ObjectConfig(override val id: Int): Config(id) {
             if (!transforms!!.contentEquals(other.transforms!!)) return false
         } else if (other.transforms != null) return false
         if (ambientSoundId != other.ambientSoundId) return false
-        if (anInt2112 != other.anInt2112) return false
-        if (anInt2113 != other.anInt2113) return false
-        if (anInt2083 != other.anInt2083) return false
+        if (ambientSoundDuration != other.ambientSoundDuration) return false
+        if (ambientSoundDurationExtend != other.ambientSoundDurationExtend) return false
+        if (ambientSoundRadius != other.ambientSoundRadius) return false
         if (soundEffectIDs != other.soundEffectIDs) return false
         if (params != other.params) return false
         return true
@@ -297,7 +297,7 @@ data class ObjectConfig(override val id: Int): Config(id) {
         result = 31 * result + sizeX.hashCode()
         result = 31 * result + sizeY.hashCode()
         result = 31 * result + (transformVarbit?.hashCode() ?: 0)
-        result = 31 * result + (mapIconId?.hashCode() ?: 0)
+        result = 31 * result + (worldMapElementId?.hashCode() ?: 0)
         result = 31 * result + (transformVarp?.hashCode() ?: 0)
         result = 31 * result + options.contentHashCode()
         result = 31 * result + clipType
@@ -331,9 +331,9 @@ data class ObjectConfig(override val id: Int): Config(id) {
         result = 31 * result + (supportItems?.hashCode() ?: 0)
         result = 31 * result + (transforms?.contentHashCode() ?: 0)
         result = 31 * result + (ambientSoundId?.hashCode() ?: 0)
-        result = 31 * result + anInt2112.hashCode()
-        result = 31 * result + anInt2113.hashCode()
-        result = 31 * result + anInt2083.hashCode()
+        result = 31 * result + ambientSoundDuration.hashCode()
+        result = 31 * result + ambientSoundDurationExtend.hashCode()
+        result = 31 * result + ambientSoundRadius.hashCode()
         result = 31 * result + (soundEffectIDs?.hashCode() ?: 0)
         result = 31 * result + (params?.hashCode() ?: 0)
         return result
@@ -443,17 +443,17 @@ data class ObjectConfig(override val id: Int): Config(id) {
                     }
                     78 -> {
                         objectConfig.ambientSoundId = buffer.uShort
-                        objectConfig.anInt2083 = buffer.uByte
+                        objectConfig.ambientSoundRadius = buffer.uByte
                     }
                     79 -> {
-                        objectConfig.anInt2112 = buffer.uShort
-                        objectConfig.anInt2113 = buffer.uShort
-                        objectConfig.anInt2083 = buffer.uByte
+                        objectConfig.ambientSoundDuration = buffer.uShort
+                        objectConfig.ambientSoundDurationExtend = buffer.uShort
+                        objectConfig.ambientSoundRadius = buffer.uByte
                         val size = buffer.uByte.toInt()
                         objectConfig.soundEffectIDs = UShortArray(size) { buffer.uShort }
                     }
                     81 -> objectConfig.contouredGround = buffer.uByte.toInt() * 256
-                    82 -> objectConfig.mapIconId = buffer.uShort
+                    82 -> objectConfig.worldMapElementId = buffer.uShort
                     249 -> objectConfig.params = buffer.params
                     else -> throw IOException("Did not recognise opcode $opcode.")
                 }

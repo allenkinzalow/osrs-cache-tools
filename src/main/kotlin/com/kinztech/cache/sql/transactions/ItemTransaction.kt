@@ -18,16 +18,15 @@ class ItemTransaction: Transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)
 
+            SchemaUtils.drop(Items)
             SchemaUtils.create (Items)
             val gson = Gson()
-
-            // Clear all old items.
-            Items.deleteAll()
 
             val itemConfig: Map<Int, ItemConfig> = ItemConfig.load(cache.readGroup(ConfigArchive.id, ItemConfig.id))
 
             Items.batchInsert(itemConfig.values) { itemCacheDefinition ->
                 if(itemCacheDefinition != null) {
+                    println("Batch insert item: ${itemCacheDefinition.id}")
                     val osrsBoxDefinition = osrsbox.items["${itemCacheDefinition.id}"]
                     this[Items.id] = itemCacheDefinition.id
                     this[Items.name] = itemCacheDefinition.name
@@ -80,6 +79,8 @@ class ItemTransaction: Transaction {
                     if(osrsBoxDefinition != null) {
                         this[Items.examine] = osrsBoxDefinition.examine
                         this[Items.weight] = osrsBoxDefinition.weight
+                        if(osrsBoxDefinition.render_animations != null)
+                            this[Items.renderAnimations] = osrsBoxDefinition.render_animations!!.joinToString()
 
                         if(osrsBoxDefinition.equipment != null) {
                             this[Items.attackStab] = osrsBoxDefinition.equipment.attack_stab
@@ -92,11 +93,13 @@ class ItemTransaction: Transaction {
                             this[Items.defenceCrush] = osrsBoxDefinition.equipment.defence_crush
                             this[Items.defenceMagic] = osrsBoxDefinition.equipment.defence_magic
                             this[Items.defenceRanged] = osrsBoxDefinition.equipment.defence_ranged
+                            this[Items.meleeStrength] = osrsBoxDefinition.equipment.melee_strength
                             this[Items.rangedStrength] = osrsBoxDefinition.equipment.ranged_strength
                             this[Items.magicDamage] = osrsBoxDefinition.equipment.magic_damage
                             this[Items.prayer] = osrsBoxDefinition.equipment.prayer
                             this[Items.equipSlot] = osrsBoxDefinition.equipment.slot
-                            //this[Items.requirements] = osrsBoxDefinition.equipment.requirements
+                            if(osrsBoxDefinition.equipment.requirements != null)
+                                this[Items.requirements] = osrsBoxDefinition.equipment.requirements.toString()
                             //this[Items.stances] = osrsBoxDefinition.equipment.stances
                         }
                         if(osrsBoxDefinition.weapon != null) {
@@ -107,19 +110,6 @@ class ItemTransaction: Transaction {
                 }
             }
             println("Exported item definitions to SQL Table.")
-
-            // Items
-            SchemaUtils.create(ItemSpawns)
-            ItemSpawns.deleteAll()
-            val itemSpawns = osrsbox.itemSpawns
-            ItemSpawns.batchInsert(itemSpawns.values) { itemSpawn ->
-                this[ItemSpawns.itemID] = itemSpawn.item
-                this[ItemSpawns.x] = itemSpawn.point.x
-                this[ItemSpawns.y] = itemSpawn.point.y
-                this[ItemSpawns.plane] = itemSpawn.point.plane
-                this[ItemSpawns.regionID] = itemSpawn.getRegionID()
-            }
-            println("Exported item spawns to SQL Table.")
         }
     }
 

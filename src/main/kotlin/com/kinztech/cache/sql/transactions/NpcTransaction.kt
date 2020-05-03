@@ -19,19 +19,17 @@ class NpcTransaction: Transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.create (Npcs, NpcDrops, NpcSpawns)
+            // Reset in case we have new columns added.
+            SchemaUtils.drop (Npcs)
+            SchemaUtils.create (Npcs)
             val gson = Gson()
-
-            // Clear all old npc data.
-            Npcs.deleteAll()
-            NpcSpawns.deleteAll()
-            NpcDrops.deleteAll()
 
             val npcConfig: Map<Int, NpcConfig> = NpcConfig.load(cache.readGroup(ConfigArchive.id, NpcConfig.id))
             println("Loaded ${npcConfig.size} NPC Cache Definitions.")
 
             npcConfig.values.forEach { npcCacheDefinition ->
                 if(npcCacheDefinition != null) {
+                    println("Batch insert npc: ${npcCacheDefinition.id}")
                     val osrsBoxDefinition = osrsbox.npcs["${npcCacheDefinition.id}"]
                     val npcSpawns = osrsbox.npcSpawns[npcCacheDefinition.id]
                     Npcs.insert {
@@ -79,7 +77,8 @@ class NpcTransaction: Transaction {
                             it[poisonous] = osrsBoxDefinition.poisonous
                             it[immune_poison] = osrsBoxDefinition.immune_poison
                             it[immune_venom] = osrsBoxDefinition.immune_venom
-                            it[weakness] = osrsBoxDefinition.weakness.contentToString()
+                            it[attributes] = osrsBoxDefinition.attributes.contentToString()
+                            it[category] = osrsBoxDefinition.category.contentToString()
                             it[slayerMonster] = osrsBoxDefinition.slayer_monster
                             it[slayerLevel] = osrsBoxDefinition.slayer_level
                             it[slayerXP] = osrsBoxDefinition.slayer_xp
@@ -105,37 +104,11 @@ class NpcTransaction: Transaction {
                             it[meleeStrength] = osrsBoxDefinition.melee_strength
                             it[rangedStrength] = osrsBoxDefinition.ranged_strength
                             it[magicDamage] = osrsBoxDefinition.magic_damage
-                            it[rareDropTable] = osrsBoxDefinition.rare_drop_table
-                        }
-                    }
-                    if (osrsBoxDefinition != null) {
-                        osrsBoxDefinition.drops.forEach { drop ->
-                            NpcDrops.insert {
-                                it[npcID] = npcCacheDefinition.id
-                                it[itemID] = drop.id
-                                it[quantity] = drop.quantity
-                                it[noted] = drop.noted
-                                it[rarity] = drop.rarity
-                                it[dropRequirements] = drop.drop_requirements
-                            }
-                        }
-                    }
-                    if(npcSpawns != null && npcSpawns.size > 0) {
-                        npcSpawns.forEach { spawn ->
-                            val point = spawn.points[0]
-                            NpcSpawns.insert {
-                                it[npcID] = npcCacheDefinition.id
-                                it[x] = point.x
-                                it[y] = point.y
-                                it[plane] = point.plane
-                                it[regionID] = spawn.getRegionID()
-                                it[orientation] = spawn.orientation
-                            }
                         }
                     }
                 }
             }
-            println("Exported npc definitions, drops, and spawns to SQL Tables.")
+            println("Exported ${npcConfig.size} npc definitions to SQL Tables.")
         }
     }
 

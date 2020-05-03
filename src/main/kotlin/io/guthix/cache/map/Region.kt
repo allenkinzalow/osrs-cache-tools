@@ -38,6 +38,7 @@ class Region @ExperimentalUnsignedTypes constructor(
 
         @ExperimentalUnsignedTypes
         fun decode(landData: ByteArray, mapData: ByteArray, baseX: Int, baseY: Int): Region {
+            println("[Decoding region] Land Size: ${landData.size} ; ObjectLocation Size: ${mapData.size}")
             val landBuffer = ByteBuffer.wrap(landData)
             val mapBuffer = ByteBuffer.wrap(mapData)
             val land = Land.decode(landBuffer, baseX, baseY)
@@ -90,7 +91,7 @@ class Land(
             for (z in 0 until Region.FLOOR_COUNT) {
                 for (x in 0 until Region.SIZE) {
                     for (y in 0 until Region.SIZE) {
-                        while (true) {
+                        loop@ while (true) {
                             val opcode = buffer.uByte.toInt()
                             when {
                                 opcode == 0 -> {
@@ -100,6 +101,7 @@ class Land(
                                     } else {
                                         tileHeights[z][x][y] = tileHeights[z - 1][x][y] - 240
                                     }
+                                    break@loop
                                 }
                                 opcode == 1 -> {
                                     var height = buffer.uByte.toInt()
@@ -109,6 +111,7 @@ class Land(
                                     } else {
                                         tileHeights[z][x][y] = tileHeights[z - 1][x][y] - height * 8
                                     }
+                                    break@loop
                                 }
                                 opcode <= 49 -> {
                                     overlayIds[z][x][y] = buffer.get()
@@ -218,5 +221,13 @@ class ObjectLocation(
             }
             return locations
         }
+    }
+
+    fun getActualX(regionId: Int): Int {
+        return (regionId shr 8 shl 6) + this.localX
+    }
+
+    fun getActualY(regionId: Int): Int {
+        return (regionId and 0xFF shl 6) + this.localY
     }
 }

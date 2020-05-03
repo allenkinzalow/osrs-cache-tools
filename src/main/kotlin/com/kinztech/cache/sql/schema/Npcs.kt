@@ -47,11 +47,12 @@ object Npcs: Table() {
     val poisonous = bool("poisonous").nullable()
     val immune_poison = bool("immune_poison").nullable()
     val immune_venom = bool("immune_venom").nullable()
-    val weakness = text("weakness").nullable()
+    val attributes = text("attributes").nullable()
+    val category = text("category").nullable()
     val slayerMonster = bool("slayer_monster").default(false).nullable()
     val slayerLevel = integer("slayer_level").nullable()
-    val slayerXP = integer("slayer_xp").nullable()
-    val slayerMasters = text("slayer_masteres").nullable()
+    val slayerXP = double("slayer_xp").nullable()
+    val slayerMasters = text("slayer_masters").nullable()
     val duplicate = bool("duplicate").nullable()
     val examine = varchar("examine", length=255).nullable()
     val attackLevel = integer("attack_level").nullable()
@@ -74,6 +75,9 @@ object Npcs: Table() {
     val rangedStrength = integer("ranged_strength").nullable()
     val magicDamage = integer("magic_damage").nullable()
     val rareDropTable = bool("rare_drop_table").nullable()
+    val attackAnimation = integer("attack_animation").nullable()
+    val blockAnimation = integer("block_animation").nullable()
+    val deathAnimation = text("death_animation").nullable()
 
 
 }

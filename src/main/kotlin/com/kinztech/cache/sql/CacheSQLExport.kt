@@ -2,6 +2,7 @@ package com.kinztech.cache.sql
 
 import com.kinztech.cache.sql.transactions.ItemTransaction
 import com.kinztech.cache.sql.transactions.NpcTransaction
+import com.kinztech.cache.sql.transactions.Transactions
 import com.kinztech.osrsbox.OSRSBox
 import io.guthix.cache.js5.Js5Cache
 import io.guthix.cache.js5.container.filesystem.Js5FileSystem
@@ -41,13 +42,13 @@ fun main(args: Array<String>) {
     logger.info("Loaded " + osrsbox.npcs.size + " OSRSBox Npcs Definitions.")
     logger.info("Loaded " + osrsbox.npcSpawns.size + " OSRSBox NPC Spawns.")
 
-    var db = DbSettings.db
-    logger.info("Connected to SQL database.")
+    DbSettings.load()
 
-    val itemTransaction = ItemTransaction()
-    itemTransaction.execute(cache, osrsbox)
-
-    val npcTransaction = NpcTransaction()
-    npcTransaction.execute(cache, osrsbox)
+    /**
+     * Run all transactions.
+     */
+    Transactions.values.forEach { transaction ->
+        transaction.transaction.execute(cache, osrsbox)
+    }
 
 }

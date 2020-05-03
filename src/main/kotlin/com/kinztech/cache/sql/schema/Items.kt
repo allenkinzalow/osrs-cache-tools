@@ -63,7 +63,7 @@ object Items: Table() {
     val defenceCrush = integer("defence_crush").default(0)
     val defenceMagic = integer("defence_magic").default(0)
     val defenceRanged = integer("defence_ranged").default(0)
-    val magicStrength = integer("magic_strength").default(0)
+    val meleeStrength = integer("melee_strength").default(0)
     val rangedStrength = integer("ranged_strength").default(0)
     val magicDamage = integer("magic_damage").default(0)
     val prayer = integer("prayer").default(0)
@@ -72,4 +72,5 @@ object Items: Table() {
     val equipSlot = varchar("equip_slot", length=255).default("")
     val attackSpeed = integer("attack_speed").default(0)
     val stances = text("stances").nullable()
+    val renderAnimations = text("render_animations").nullable()
 }

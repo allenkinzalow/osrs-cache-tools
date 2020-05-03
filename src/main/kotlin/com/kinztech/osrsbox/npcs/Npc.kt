@@ -16,10 +16,11 @@ data class Npc(
     val poisonous: Boolean,
     val immune_poison: Boolean,
     val immune_venom: Boolean,
-    val weakness: Array<String>,
+    val attributes: Array<String>,
+    val category: Array<String>,
     val slayer_monster: Boolean,
     val slayer_level: Int,
-    val slayer_xp: Int,
+    val slayer_xp: Double,
     val slayer_masters: Array<String>,
     val duplicate: Boolean,
     val examine: String,
@@ -69,7 +70,8 @@ data class Npc(
         if (poisonous != other.poisonous) return false
         if (immune_poison != other.immune_poison) return false
         if (immune_venom != other.immune_venom) return false
-        if (!weakness.contentEquals(other.weakness)) return false
+        if (!attributes.contentEquals(other.attributes)) return false
+        if (!category.contentEquals(other.category)) return false
         if (slayer_monster != other.slayer_monster) return false
         if (slayer_level != other.slayer_level) return false
         if (slayer_xp != other.slayer_xp) return false
@@ -117,10 +119,9 @@ data class Npc(
         result = 31 * result + poisonous.hashCode()
         result = 31 * result + immune_poison.hashCode()
         result = 31 * result + immune_venom.hashCode()
-        result = 31 * result + weakness.contentHashCode()
         result = 31 * result + slayer_monster.hashCode()
         result = 31 * result + slayer_level
-        result = 31 * result + slayer_xp
+        result = 31 * result + slayer_xp.toInt()
         result = 31 * result + slayer_masters.contentHashCode()
         result = 31 * result + duplicate.hashCode()
         result = 31 * result + examine.hashCode()

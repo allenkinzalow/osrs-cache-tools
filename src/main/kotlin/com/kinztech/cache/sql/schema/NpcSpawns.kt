@@ -10,4 +10,5 @@ object NpcSpawns: Table() {
     val plane = integer("plane")
     val regionID = integer("region_id")
     val orientation = integer("orientation")
+    val walkRadius = integer("walk_radius")
 }

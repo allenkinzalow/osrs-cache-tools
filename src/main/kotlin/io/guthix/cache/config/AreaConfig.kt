@@ -26,17 +26,17 @@ import java.nio.ByteBuffer
 @ExperimentalUnsignedTypes
 data class AreaConfig(override val id: Int) : Config(id) {
     var spriteId: Int? = null
-    var field3032: Int? = null
+    var unusedSpriteId: Int? = null
     var name: String? = null
-    var field3033: Int? = null
+    var textColor: Int? = null
     var textSize: UByte = 0u
     var shortArray: ShortArray? = null
-    var aString1970: String? = null
+    var menuTargetName: String? = null
     var flags: UByte = 0u
     var intarray35: IntArray? = null
     var category: UShort? = null
     var byteArray33: ByteArray? = null
-    val stringArray = arrayOfNulls<String>(5)
+    val menuActions = arrayOfNulls<String>(5)
 
     @ExperimentalUnsignedTypes
     override fun encode(): ByteBuffer {
@@ -46,17 +46,17 @@ data class AreaConfig(override val id: Int) : Config(id) {
                 os.writeOpcode(1)
                 os.writeNullableLargeSmart(spriteId)
             }
-            field3032?.let {
+            unusedSpriteId?.let {
                 os.writeOpcode(2)
-                os.writeNullableLargeSmart(field3032)
+                os.writeNullableLargeSmart(unusedSpriteId)
             }
             name?.let {
                 os.writeOpcode(3)
                 os.writeString(name!!)
             }
-            field3033?.let {
+            textColor?.let {
                 os.writeOpcode(4)
-                os.writeMedium(field3033!!)
+                os.writeMedium(textColor!!)
             }
             if(textSize.toInt() != 0) {
                 os.writeOpcode(6)
@@ -66,7 +66,7 @@ data class AreaConfig(override val id: Int) : Config(id) {
                 os.writeOpcode(7)
                 os.writeByte(flags.toInt())
             }
-            stringArray.forEachIndexed { i, s ->
+            menuActions.forEachIndexed { i, s ->
                 s?.let {
                     os.writeOpcode(i + 10)
                     os.writeString(s)
@@ -81,9 +81,9 @@ data class AreaConfig(override val id: Int) : Config(id) {
                 intarray35!!.forEach { os.writeInt(it) }
                 byteArray33!!.forEach { os.writeByte(it.toInt()) }
             }
-            aString1970?.let {
+            menuTargetName?.let {
                 os.writeOpcode(17)
-                os.writeString(aString1970!!)
+                os.writeString(menuTargetName!!)
             }
             category?.let {
                 os.writeOpcode(19)
@@ -99,15 +99,15 @@ data class AreaConfig(override val id: Int) : Config(id) {
         if (this === other) return true
         if (other !is AreaConfig) return false
         if (spriteId != other.spriteId) return false
-        if (field3032 != other.field3032) return false
+        if (unusedSpriteId != other.unusedSpriteId) return false
         if (name != other.name) return false
-        if (field3033 != other.field3033) return false
+        if (textColor != other.textColor) return false
         if (textSize != other.textSize) return false
         if (shortArray != null) {
             if (other.shortArray == null) return false
             if (!shortArray!!.contentEquals(other.shortArray!!)) return false
         } else if (other.shortArray != null) return false
-        if (aString1970 != other.aString1970) return false
+        if (menuTargetName != other.menuTargetName) return false
         if (flags != other.flags) return false
         if (intarray35 != null) {
             if (other.intarray35 == null) return false
@@ -118,24 +118,24 @@ data class AreaConfig(override val id: Int) : Config(id) {
             if (other.byteArray33 == null) return false
             if (!byteArray33!!.contentEquals(other.byteArray33!!)) return false
         } else if (other.byteArray33 != null) return false
-        if (!stringArray.contentEquals(other.stringArray)) return false
+        if (!menuActions.contentEquals(other.menuActions)) return false
         return true
     }
 
     @ExperimentalUnsignedTypes
     override fun hashCode(): Int {
         var result = spriteId ?: 0
-        result = 31 * result + (field3032 ?: 0)
+        result = 31 * result + (unusedSpriteId ?: 0)
         result = 31 * result + (name?.hashCode() ?: 0)
-        result = 31 * result + (field3033 ?: 0)
+        result = 31 * result + (textColor ?: 0)
         result = 31 * result + textSize.hashCode()
         result = 31 * result + (shortArray?.contentHashCode() ?: 0)
-        result = 31 * result + (aString1970?.hashCode() ?: 0)
+        result = 31 * result + (menuTargetName?.hashCode() ?: 0)
         result = 31 * result + flags.hashCode()
         result = 31 * result + (intarray35?.contentHashCode() ?: 0)
         result = 31 * result + (category?.hashCode() ?: 0)
         result = 31 * result + (byteArray33?.contentHashCode() ?: 0)
-        result = 31 * result + stringArray.contentHashCode()
+        result = 31 * result + menuActions.contentHashCode()
         return result
     }
 
@@ -150,14 +150,14 @@ data class AreaConfig(override val id: Int) : Config(id) {
                 when (val opcode = buffer.uByte.toInt()) {
                     0 -> break@decoder
                     1 -> areaConfig.spriteId = buffer.nullableLargeSmart
-                    2 -> areaConfig.field3032 = buffer.nullableLargeSmart
+                    2 -> areaConfig.unusedSpriteId = buffer.nullableLargeSmart
                     3 -> areaConfig.name = buffer.string
-                    4 -> areaConfig.field3033 = buffer.uMedium
+                    4 -> areaConfig.textColor = buffer.uMedium
                     5 -> buffer.uMedium
                     6 -> areaConfig.textSize = buffer.uByte
                     7 -> areaConfig.flags = buffer.uByte
                     8 -> buffer.uByte
-                    in 10..14 -> areaConfig.stringArray[opcode - 10] = buffer.string
+                    in 10..14 -> areaConfig.menuActions[opcode - 10] = buffer.string
                     15 -> {
                         val size = buffer.uByte.toInt()
                         areaConfig.shortArray = ShortArray(size * 2) {
@@ -172,7 +172,7 @@ data class AreaConfig(override val id: Int) : Config(id) {
                             buffer.get()
                         }
                     }
-                    17 -> areaConfig.aString1970 = buffer.string
+                    17 -> areaConfig.menuTargetName = buffer.string
                     18 -> buffer.largeSmart
                     19 -> areaConfig.category = buffer.uShort
                     21 -> buffer.int
