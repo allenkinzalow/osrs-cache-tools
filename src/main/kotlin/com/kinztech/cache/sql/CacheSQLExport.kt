@@ -40,7 +40,13 @@ fun main(args: Array<String>) {
     logger.info("Loaded " + osrsbox.items.size + " OSRSBox Item Definitions.")
     logger.info("Loaded " + osrsbox.itemSpawns.size + " Item Spawn Locations.")
     logger.info("Loaded " + osrsbox.npcs.size + " OSRSBox Npcs Definitions.")
-    logger.info("Loaded " + osrsbox.npcSpawns.size + " OSRSBox NPC Spawns.")
+    var totalNpcSpawns = 0
+    osrsbox.npcSpawns.values.forEach { list ->
+        list.forEach { spawn ->
+            totalNpcSpawns++
+        }
+    }
+    logger.info("Loaded " + totalNpcSpawns + " OSRSBox NPC Spawns.")
 
     DbSettings.load()
 

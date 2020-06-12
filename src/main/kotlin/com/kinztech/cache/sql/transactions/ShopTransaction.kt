@@ -20,9 +20,6 @@ class ShopTransaction: Transaction {
             SchemaUtils.drop(Shop, ShopItem)
             SchemaUtils.create(Shop, ShopItem)
 
-            // Clear all old Shops.
-            Shop.deleteAll()
-
             val npcConfig: Map<Int, NpcConfig> = NpcConfig.load(cache.readGroup(ConfigArchive.id, NpcConfig.id))
             osrsbox.shops.forEach { shop ->
                 println("Insert Shop: ${shop.title}")

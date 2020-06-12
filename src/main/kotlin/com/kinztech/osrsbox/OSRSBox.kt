@@ -7,11 +7,9 @@ import com.kinztech.osrsbox.items.ItemRA
 import com.kinztech.osrsbox.items.ItemSpawn
 import com.kinztech.osrsbox.npcs.Npc
 import com.kinztech.osrsbox.npcs.NpcSpawn
+import com.kinztech.osrsbox.npcs.Pets
 import com.kinztech.osrsbox.shops.Shop
-import java.io.BufferedReader
-import java.io.FileInputStream
-import java.io.FileReader
-import java.io.InputStreamReader
+import java.io.*
 
 class OSRSBox {
 
@@ -30,12 +28,7 @@ class OSRSBox {
         itemsRA = Gson().fromJson(InputStreamReader(FileInputStream(ITEMS_RA_PATH)), object : TypeToken<Array<ItemRA>>() {}.type)
         npcs = Gson().fromJson(InputStreamReader(FileInputStream(NPCS_PATH)), object : TypeToken<Map<String, Npc>>() {}.type)
         shops = Gson().fromJson(InputStreamReader(FileInputStream(SHOP_PATH)), object : TypeToken<Array<Shop>>() {}.type)
-        val npcSpawns: Array<NpcSpawn> = Gson().fromJson(InputStreamReader(FileInputStream(SPAWNS_PATH)), object : TypeToken<Array<NpcSpawn>>() {}.type)
-        npcSpawns.forEach { spawn ->
-            if(this.npcSpawns[spawn.npc] == null)
-                this.npcSpawns[spawn.npc] = mutableListOf<NpcSpawn>()
-            this.npcSpawns[spawn.npc]?.add(spawn)
-        }
+
         items.values.sortedWith(compareBy { it .id }).forEach { item ->
             if(!itemNameMap.containsKey(item.name.toLowerCase()))
                 itemNameMap[item.name.toLowerCase()] = item
@@ -45,6 +38,28 @@ class OSRSBox {
                 items[it.id.toString()]?.render_animations = it.equipment.render_animations
             }
         }
+
+        /**
+         * Npc Spawns
+         */
+        val npcSpawnDirectory: File = File(NPC_SPAWNS_PATH)
+        npcSpawnDirectory.listFiles().forEach { file ->
+            val npcSpawns: Array<NpcSpawn> = Gson().fromJson(InputStreamReader(FileInputStream(file)), object : TypeToken<Array<NpcSpawn>>() {}.type)
+            npcSpawns.forEach npcspawns@{ spawn ->
+                val npcDef = npcs[spawn.npc.toString()]
+                if(npcDef != null) {
+                    if(npcDef.name.endsWith((" impling")) || Pets.findForName(npcDef.name) != null)
+                        return@npcspawns
+                }
+                if(this.npcSpawns[spawn.npc] == null)
+                    this.npcSpawns[spawn.npc] = mutableListOf<NpcSpawn>()
+                this.npcSpawns[spawn.npc]?.add(spawn)
+            }
+        }
+
+        /**
+         * Ground Item Spawns
+         */
         val fileReader: BufferedReader? = BufferedReader(FileReader(ITEM_SPAWNS_PATH_CSV))
         if(fileReader != null) {
             // Read CSV header
@@ -54,7 +69,7 @@ class OSRSBox {
                 val tokens = line.split(",")
                 if(tokens.size >= 12) {
                     val name = tokens[2]
-                    val item = itemNameMap[name]
+                    val item = itemNameMap[name.toLowerCase()]
                     if (item != null) {
                         val x = tokens[4].replace("\"", "").toInt()
                         val y = tokens[5].replace("\"", "").toInt()
@@ -71,9 +86,9 @@ class OSRSBox {
     companion object {
         const val ITEMS_PATH: String = "data/osrsbox/items-complete.json"
         const val ITEMS_RA_PATH: String = "data/osrsbox/itemsra.json"
-        const val ITEM_SPAWNS_PATH_CSV: String = "data/osrsbox/item_spawns.csv"
+        const val ITEM_SPAWNS_PATH_CSV: String = "data/osrsbox/spawns/items/item_spawns.csv"
         const val NPCS_PATH: String = "data/osrsbox/monsters-complete.json"
-        const val SPAWNS_PATH: String = "data/osrsbox/spawns.json"
+        const val NPC_SPAWNS_PATH: String = "data/osrsbox/spawns/npcs"
         const val SHOP_PATH: String = "data/osrsbox/all_shops.json"
     }
 

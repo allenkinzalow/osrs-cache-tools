@@ -46,7 +46,7 @@ class NpcSpawnsTransaction: Transaction {
                     }
                     if (npcSpawns != null) {
                         npcSpawns.forEach { spawn ->
-                            val point = spawn.getCenter()
+                            val point = spawn.points[0]
                             NpcSpawns.insert {
                                 it[npcID] = npcCacheDefinition.id
                                 it[x] = point.x
