@@ -2,6 +2,7 @@ package com.kinztech.cache.sql.transactions
 
 import com.kinztech.cache.sql.schema.Shop
 import com.kinztech.cache.sql.schema.ShopItem
+import com.kinztech.cache.sql.schema.ShopOwner
 import com.kinztech.osrsbox.OSRSBox
 import io.guthix.cache.js5.Js5Cache
 import io.guthix.osrs.cache.ConfigArchive
@@ -17,8 +18,8 @@ class ShopTransaction: Transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)
 
-            SchemaUtils.drop(Shop, ShopItem)
-            SchemaUtils.create(Shop, ShopItem)
+            SchemaUtils.drop(Shop, ShopItem, ShopOwner)
+            SchemaUtils.create(Shop, ShopItem, ShopOwner)
 
             val npcConfig: Map<Int, NpcConfig> = NpcConfig.load(cache.readGroup(ConfigArchive.id, NpcConfig.id))
             osrsbox.shops.forEach { shop ->
@@ -49,6 +50,10 @@ class ShopTransaction: Transaction {
                     it[Shop.currency_id] = currency_id
                 } get Shop.id
                 if(shopId > 0) {
+                    ShopOwner.batchInsert(owner_ids) { owner_id ->
+                        this[ShopOwner.shopId] = shopId
+                        this[ShopOwner.npcId] = owner_id
+                    }
                     shop.items.forEach { item ->
                         if(osrsbox.itemNameMap.containsKey(item.name.toLowerCase())) {
                             val itemDef = osrsbox.itemNameMap[item.name.toLowerCase()]
