@@ -14,7 +14,7 @@ object DbSettings {
      */
     private var database: Database? = null
     fun load() {
-        val dbProperties: Properties = Properties()
+        val dbProperties = Properties()
         dbProperties.loadYaml(Paths.get("./db.yml").toFile())
         val dataSource = MysqlConnectionPoolDataSource()
         dataSource.serverName = dbProperties.getOrDefault("database-host", "localhost")
@@ -23,7 +23,7 @@ object DbSettings {
         dataSource.user = dbProperties.get("database-user")
         dataSource.setPassword(dbProperties.get("database-password"))
         dataSource.allowMultiQueries = true
-        database = Database.connect(dataSource)
+        database = Database.connect("jdbc:sqlite:/sqllite/data/test.db", "org.sqlite.JDBC")
         logger.info("Connected to SQL database.")
     }
 }

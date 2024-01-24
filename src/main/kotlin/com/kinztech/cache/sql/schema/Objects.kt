@@ -45,4 +45,5 @@ object Objects: Table() {
     val ambientSoundRadius = integer("as_radius").nullable()
     val soundEffectIds = text("sound_effect_ids").nullable()
     val params = text("params").nullable()
+    val randomizedAnimStart = bool("randomized_anim_start").default(false)
 }

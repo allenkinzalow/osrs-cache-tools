@@ -1,3 +1,4 @@
+/*
 package com.kinztech.cache.sql.transactions
 
 import com.kinztech.cache.sql.schema.Shop
@@ -82,4 +83,4 @@ class ShopTransaction: Transaction {
         }
     }
 
-}
+}*/

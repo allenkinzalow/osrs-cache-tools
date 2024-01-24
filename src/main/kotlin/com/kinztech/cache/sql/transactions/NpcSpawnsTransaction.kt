@@ -1,3 +1,4 @@
+/*
 package com.kinztech.cache.sql.transactions
 
 import com.google.gson.Gson
@@ -65,4 +66,4 @@ class NpcSpawnsTransaction: Transaction {
         }
     }
 
-}
+}*/

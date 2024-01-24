@@ -4,6 +4,7 @@ import com.kinztech.cache.sql.schema.Items
 import com.kinztech.cache.sql.schema.TblAreaRegions
 import com.kinztech.osrsbox.OSRSBox
 import io.guthix.cache.js5.Js5Cache
+import net.runelite.cache.fs.Store
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
@@ -22,7 +23,7 @@ class TblRegionsTransaction: Transaction {
     private val DESERT = listOf(13107, 13363, 13362, 13106, 13105, 13361, 13617, 12848, 13104, 13360, 13616, 13872, 12591, 12847, 13103, 13359, 13615, 12590, 12846, 13102, 13358, 13614, 12589, 12845, 13101, 13357, 13613, 12844, 13100, 13356, 12843, 13099, 11605)
     private val MORYTANIA = listOf(13624, 13623, 13879, 14135, 14391, 14647, 15159, 13622, 13879, 14134, 14390, 14646, 13621, 13877, 14133, 14389, 14645, 14901, 14900, 14644, 14388, 14132, 13876, 13620, 13619, 13875, 14131, 14387, 14643, 14899, 13618, 13874, 14130, 14386, 14642, 14898, 13873, 14129, 14385, 14641, 14897, 14639, 14895, 15151, 15407, 15406, 15150, 14894, 14638, 15148)
 
-    override fun execute(cache: Js5Cache, osrsbox: OSRSBox) {
+    override fun execute(store: Store) {
         transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)

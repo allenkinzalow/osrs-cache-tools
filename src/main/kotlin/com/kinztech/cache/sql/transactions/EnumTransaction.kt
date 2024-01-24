@@ -1,3 +1,4 @@
+/*
 package com.kinztech.cache.sql.transactions
 
 import com.kinztech.cache.sql.schema.EnumValuePairs
@@ -41,4 +42,4 @@ class EnumTransaction: Transaction {
         }
     }
 
-}
+}*/

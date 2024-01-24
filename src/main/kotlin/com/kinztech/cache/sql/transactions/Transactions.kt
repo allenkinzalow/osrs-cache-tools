@@ -11,10 +11,10 @@ enum class Transactions(val transaction: Transaction) {
     //NPCS_SPAWNS(transaction = NpcSpawnsTransaction()),
     //ENUMS(transaction = EnumTransaction()),
     //STRUCTS(transaction = StructTransaction()),
-    //OBJECTS(transaction = ObjectTransaction()),
-    //REGIONS(transaction = RegionTransaction()),
+    OBJECTS(transaction = ObjectTransaction()),
+    REGIONS(transaction = RegionTransaction()),
     //WIDGETS(transaction = WidgetTransaction()),
-    SHOPS(transaction = ShopTransaction()),
+    //SHOPS(transaction = ShopTransaction()),
     //TBL_REGIONS(transaction = TblRegionsTransaction()),
     ;
     companion object {

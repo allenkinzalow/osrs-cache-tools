@@ -42,7 +42,7 @@ class OSRSBox {
         /**
          * Npc Spawns
          */
-        val npcSpawnDirectory: File = File(NPC_SPAWNS_PATH)
+        /*val npcSpawnDirectory: File = File(NPC_SPAWNS_PATH)
         npcSpawnDirectory.listFiles().forEach { file ->
             val npcSpawns: Array<NpcSpawn> = Gson().fromJson(InputStreamReader(FileInputStream(file)), object : TypeToken<Array<NpcSpawn>>() {}.type)
             npcSpawns.forEach npcspawns@{ spawn ->
@@ -55,7 +55,7 @@ class OSRSBox {
                     this.npcSpawns[spawn.npc] = mutableListOf<NpcSpawn>()
                 this.npcSpawns[spawn.npc]?.add(spawn)
             }
-        }
+        }*/
 
         /**
          * Ground Item Spawns

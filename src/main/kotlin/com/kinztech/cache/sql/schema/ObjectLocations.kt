@@ -7,10 +7,8 @@ object ObjectLocations: Table() {
     val object_id = integer("object_id")
     val region_id = integer("region_id")
     val plane = integer("plane")
-    val localX = integer("local_x")
-    val localY = integer("local_y")
-    val actualX = integer("actual_x")
-    val actualY = integer("actual_y")
+    val x = integer("x")
+    val y = integer("y")
     val type = integer("type")
     val orientation = integer("orientation")
 }

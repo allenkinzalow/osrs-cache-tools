@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class ItemSpawnsTransaction: Transaction  {
+/*class ItemSpawnsTransaction: Transaction  {
 
     override fun execute(cache: Js5Cache, osrsbox: OSRSBox) {
         transaction {
@@ -27,4 +27,4 @@ class ItemSpawnsTransaction: Transaction  {
         }
     }
 
-}
+}*/

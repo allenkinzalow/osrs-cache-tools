@@ -8,6 +8,9 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     jcenter()
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
@@ -19,12 +22,18 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: sl4jVersion
     implementation group: 'de.javagl', name: 'jgltf-model', version: '2.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation group: 'com.google.guava', name: 'guava', version: '11.0.2'
+    implementation 'org.antlr:antlr4-runtime:4.9.2'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0'
+    compile 'org.projectlombok:lombok:1.18.28'
     compile 'org.jetbrains.exposed:exposed-core:0.23.1'
     compile 'org.jetbrains.exposed:exposed-dao:0.23.1'
     compile 'org.jetbrains.exposed:exposed-jdbc:0.23.1'
     compile 'org.jetbrains.exposed:exposed-jodatime:0.23.1'
     compile "mysql:mysql-connector-java:5.1.46"
     compile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.10.0"
+    compile "commons-cli:commons-cli:1.5.0"
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
 }
 
 compileKotlin {
@@ -32,4 +41,8 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

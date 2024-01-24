@@ -1,3 +1,4 @@
+/*
 package com.kinztech.cache.sql.transactions
 
 import com.kinztech.osrsbox.OSRSBox
@@ -9,4 +10,4 @@ class WorldMapTransaction: Transaction {
 
     }
 
-}
+}*/

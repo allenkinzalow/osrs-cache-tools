@@ -1,10 +1,9 @@
 package com.kinztech.cache.sql.transactions
 
-import com.kinztech.osrsbox.OSRSBox
-import io.guthix.cache.js5.Js5Cache
+import net.runelite.cache.fs.Store
 
 interface Transaction {
 
-    fun execute(cache: Js5Cache, osrsbox: OSRSBox)
+    fun execute(store: Store)
 
 }

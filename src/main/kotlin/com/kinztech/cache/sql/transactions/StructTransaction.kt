@@ -1,3 +1,4 @@
+/*
 package com.kinztech.cache.sql.transactions
 
 import com.kinztech.cache.sql.schema.Structs
@@ -35,4 +36,4 @@ class StructTransaction: Transaction {
         }
     }
 
-}
+}*/

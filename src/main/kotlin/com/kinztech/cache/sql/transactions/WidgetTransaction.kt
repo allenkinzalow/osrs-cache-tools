@@ -2,16 +2,19 @@ package com.kinztech.cache.sql.transactions
 
 import com.google.gson.Gson
 import com.kinztech.cache.sql.schema.Widgets
-import com.kinztech.osrsbox.OSRSBox
-import io.guthix.cache.js5.Js5Cache
-import io.guthix.osrs.cache.ComponentArchive
+import net.runelite.cache.InterfaceManager
+import net.runelite.cache.fs.Store
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
 
 class WidgetTransaction: Transaction {
 
-    override fun execute(cache: Js5Cache, osrsbox: OSRSBox) {
-        transaction {
+    override fun execute(store: Store) {
+        val interfaceManager = InterfaceManager(store)
+        interfaceManager.load()
+        interfaceManager.export( File("interfaces"))
+       /* transaction {
             // print sql to std-out
             addLogger(StdOutSqlLogger)
 
@@ -21,7 +24,9 @@ class WidgetTransaction: Transaction {
             // Clear all old widgets.
             Widgets.deleteAll()
 
-            val components: ComponentArchive = ComponentArchive.load(cache)
+            val interfaceManager = InterfaceManager(store)
+            interfaceManager.load()
+
 
             Widgets.batchInsert(components.components) { component ->
                 this[Widgets.id] = component.id
@@ -118,7 +123,7 @@ class WidgetTransaction: Transaction {
 
             }
             println("Exported widget definitions to SQL Table.")
-        }
+        }*/
     }
 
 }
